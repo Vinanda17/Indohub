@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indohub</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #000;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .logo .indo {
+            color: #fff;
+        }
+        .logo .hub {
+            color: #000;
+            background-color: #ff0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .search-bar {
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+        .container {
+            padding: 10px;
+        }
+        .video-grid {
+            display: grid;
+            gap: 10px;
+        }
+        .video-item {
+            position: relative;
+        }
+        .video-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .video-title {
+            font-size: 14px;
+            margin: 5px 0;
+            color: #fff;
+        }
+        .video-stats {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            color: #ccc;
+        }
+        .video-stats button {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+        }
+        .comments {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .comments textarea {
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .comments button {
+            background-color: #ff0;
+            color: #000;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination a {
+            color: #ff0;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        .pagination a:hover {
+            text-decoration: underline;
+        }
+        .video-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-overlay video {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span class="indo">Indo</span><span class="hub">hub</span>
+        </div>
+        <input type="text" class="search-bar" placeholder="Search...">
+    </div>
+    <div class="container">
+        <div class="video-grid" id="video-grid"></div>
+        <div class="pagination" id="pagination"></div>
+    </div>
+    <div class="video-overlay" id="video-overlay">
+        <span class="close-btn" onclick="closeVideo()">✖</span>
+        <video controls id="video-player"></video>
+    </div>
+
+    <script>
+        const adsterraLink = "https://derideskid.com/wry5hw6t?key=e4a60e1277c9396dea0b83961aa79c79";
+        const videos = [
+            // Page 1
+            [
+                { id: 1, title: "indo viral 1", video: "Indohub/Videos pages (1)/indo_viral_1.mp4", thumbnail: "Indohub/Videos pages (1)/indo_viral_1.jpg", views: 1000, likes: 50, comments: [] },
+                { id: 2, title: "indo viral 2", video: "Indohub/Videos pages (1)/indo_viral_2.mp4", thumbnail: "Indohub/Videos pages (1)/indo_viral_2.jpg", views: 1200, likes: 60, comments: [] },
+                { id: 3, title: "indo viral 3", video: "Indohub/Videos pages (1)/indo_viral_3.mp4", thumbnail: "Indohub/Videos pages (1)/indo_viral_3.jpg", views: 800, likes: 40, comments: [] },
+                { id: 4, title: "indo viral 4", video: "Indohub/Videos pages (1)/indo_viral_4.mp4", thumbnail: "Indohub/Videos pages (1)/indo_viral_4.jpg", views: 1500, likes: 70, comments: [] },
+                { id: 5, title: "indo viral 5", video: "Indohub/Videos pages (1)/indo_viral_5.mp4", thumbnail: "Indohub/Videos pages (1)/indo_viral_5.jpg", views: 2000, likes: 90, comments: [] },
+            ],
+            // Page 2
+            [
+                { id: 6, title: "indo viral 6", video: "Indohub/Videos pages (2)/indo_viral_6.mp4", thumbnail: "Indohub/Videos pages (2)/indo_viral_6.jpg", views: 1100, likes: 55, comments: [] },
+                { id: 7, title: "indo viral 7", video: "Indohub/Videos pages (2)/indo_viral_7.mp4", thumbnail: "Indohub/Videos pages (2)/indo_viral_7.jpg", views: 1300, likes: 65, comments: [] },
+                { id: 8, title: "indo viral 8", video: "Indohub/Videos pages (2)/indo_viral_8.mp4", thumbnail: "Indohub/Videos pages (2)/indo_viral_8.jpg", views: 900, likes: 45, comments: [] },
+                { id: 9, title: "indo viral 9", video: "Indohub/Videos pages (2)/indo_viral_9.mp4", thumbnail: "Indohub/Videos pages (2)/indo_viral_9.jpg", views: 1600, likes: 75, comments: [] },
+                { id: 10, title: "indo viral 10", video: "Indohub/Videos pages (2)/indo_viral_10.mp4", thumbnail: "Indohub/Videos pages (2)/indo_viral_10.jpg", views: 2100, likes: 95, comments: [] },
+            ]
+        ];
+
+        function loadPage(page) {
+            const videoGrid = document.getElementById("video-grid");
+            videoGrid.innerHTML = "";
+            videos[page - 1].forEach(video => {
+                const storedData = JSON.parse(localStorage.getItem(`video_${video.id}`)) || video;
+                const videoItem = document.createElement("div");
+                videoItem.className = "video-item";
+                videoItem.innerHTML = `
+                    <img src="${video.thumbnail}" alt="${video.title}" onclick="playVideo('${video.video}')">
+                    <div class="video-title">${video.title}</div>
+                    <div class="video-stats">
+                        <span>${storedData.views} views</span>
+                        <button onclick="likeVideo(${video.id})">👍 ${storedData.likes}</button>
+                        <span>💬 ${storedData.comments.length}</span>
+                    </div>
+                    <div class="comments">
+                        <textarea placeholder="Add a comment..." id="comment_${video.id}"></textarea>
+                        <button onclick="addComment(${video.id})">Comment</button>
+                        <div id="comments_${video.id}">
+                            ${storedData.comments.map(c => `<p>${c}</p>`).join("")}
+                        </div>
+                    </div>
+                `;
+                videoGrid.appendChild(videoItem);
+            });
+
+            const pagination = document.getElementById("pagination");
+            pagination.innerHTML = `
+                ${page > 1 ? `<a href="#" onclick="loadPage(${page - 1})">Previous</a>` : ""}
+                ${page < videos.length ? `<a href="#" onclick="loadPage(${page + 1})">Next</a>` : ""}
+            `;
+        }
+
+        function playVideo(videoSrc) {
+            window.location.href = adsterraLink;
+            setTimeout(() => {
+                const overlay = document.getElementById("video-overlay");
+                const player = document.getElementById("video-player");
+                player.src = videoSrc;
+                overlay.style.display = "flex";
+            }, 1000);
+        }
+
+        function closeVideo() {
+            const overlay = document.getElementById("video-overlay");
+            const player = document.getElementById("video-player");
+            player.pause();
+            player.src = "";
+            overlay.style.display = "none";
+        }
+
+        function likeVideo(videoId) {
+            const storedData = JSON.parse(localStorage.getItem(`video_${videoId}`)) || videos.flat().find(v => v.id === videoId);
+            storedData.likes += 1;
+            localStorage.setItem(`video_${videoId}`, JSON.stringify(storedData));
+            loadPage(getCurrentPage());
+        }
+
+        function addComment(videoId) {
+            const commentInput = document.getElementById(`comment_${videoId}`);
+            const commentText = commentInput.value.trim();
+            if (commentText) {
+                const storedData = JSON.parse(localStorage.getItem(`video_${videoId}`)) || videos.flat().find(v => v.id === videoId);
+                storedData.comments.push(commentText);
+                localStorage.setItem(`video_${videoId}`, JSON.stringify(storedData));
+                commentInput.value = "";
+                loadPage(getCurrentPage());
+            }
+        }
+
+        function getCurrentPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return parseInt(urlParams.get("page") || "1");
+        }
+
+        document.querySelector(".search-bar").addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase();
+            const videoGrid = document.getElementById("video-grid");
+            videoGrid.innerHTML = "";
+            videos.flat().forEach(video => {
+                if (video.title.toLowerCase().includes(query)) {
+                    const storedData = JSON.parse(localStorage.getItem(`video_${video.id}`)) || video;
+                    const videoItem = document.createElement("div");
+                    videoItem.className = "video-item";
+                    videoItem.innerHTML = `
+                        <img src="${video.thumbnail}" alt="${video.title}" onclick="playVideo('${video.video}')">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-stats">
+                            <span>${storedData.views} views</span>
+                            <button onclick="likeVideo(${video.id})">👍 ${storedData.likes}</button>
+                            <span>💬 ${storedData.comments.length}</span>
+                        </div>
+                        <div class="comments">
+                            <textarea placeholder="Add a comment..." id="comment_${video.id}"></textarea>
+                            <button onclick="addComment(${video.id})">Comment</button>
+                            <div id="comments_${video.id}">
+                                ${storedData.comments.map(c => `<p>${c}</p>`).join("")}
+                            </div>
+                        </div>
+                    `;
+                    videoGrid.appendChild(videoItem);
+                }
+            });
+        });
+
+        loadPage(getCurrentPage());
+    </script>
+</body>
+</html>
